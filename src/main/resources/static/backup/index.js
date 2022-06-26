@@ -5,7 +5,6 @@ angular.module('market_front', []).controller('appController', function ($scope,
     let currentPage = 1;
 
     $scope.loadProducts = function (pageIndex) {
-        currentPage = pageIndex;
         $http({
             url: contextPath + 'products',
             method: 'GET',
@@ -16,14 +15,14 @@ angular.module('market_front', []).controller('appController', function ($scope,
             .then(function (response) {
                 $scope.productsPage = response.data;
                 $scope.paginationArray = $scope.generatePageIndexes (1, $scope.productsPage.totalPages);
+                currentPage = pageIndex;
             });
     }
 
     $scope.deleteProduct = function (product) {
         $http.delete(contextPath + 'products/' + product.id)
-            .then(function (response) {
-                console.log(response)
-                $scope.loadProducts()
+            .then(function () {
+                $scope.loadProducts(currentPage);
             });
     }
 
@@ -41,6 +40,27 @@ angular.module('market_front', []).controller('appController', function ($scope,
                 });
     }
 
+    $scope.prepareProductForUpdate = function (productId) {
+        $http.get(contextPath + 'products/' + productId)
+            .then(
+                function successCallback(response) {
+                    $scope.updated_product = response.data;
+                },
+                function failCallback() {
+                    alert("Product cannot be find!");
+                });
+    }
+    $scope.updateProduct = function () {
+        $http.put(contextPath + 'products', $scope.updated_product)
+            .then(
+                function successCallback() {
+                    $scope.loadProducts(currentPage);
+                    $scope.updated_product = null;
+                },
+                function failCallback() {
+                    alert("Product cannot be updated!");
+                });
+    }
     $scope.generatePageIndexes = function (startPage, endPage){
         let arr = [];
         for (let i = startPage; i <= endPage; i++) {
