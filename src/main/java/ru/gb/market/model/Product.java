@@ -1,12 +1,16 @@
 package ru.gb.market.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Product {
     @Id
@@ -21,6 +25,12 @@ public class Product {
     private int price;
 
     public Product(String title, int price) {
+        this.title = title;
+        this.price = price;
+    }
+
+    public Product(Long id, String title, int price) {
+        this.id = id;
         this.title = title;
         this.price = price;
     }
